@@ -11,6 +11,7 @@ function App() {
   const [capturedWhitePieces, setCapturedWhitePieces] = useState([]);
   const [capturedBlackPieces, setCapturedBlackPieces] = useState([]);
   const [gameStatus, setGameStatus] = useState("");
+  const [bestMoveSquares, setBestMoveSquares] = useState({});
 
   const [bestMove, setBestMove] = useState("");
   const engineRef = useRef(null);
@@ -47,7 +48,20 @@ function App() {
 
       if (line.startsWith("bestmove")) {
         const move = line.split(" ")[1];
+
         setBestMove(move);
+
+        const from = move.slice(0, 2);
+        const to = move.slice(2, 4);
+
+        setBestMoveSquares({
+          [from]: {
+            boxShadow: "inset 0 0 0 4px lime",
+          },
+          [to]: {
+            boxShadow: "inset 0 0 0 4px lime",
+          },
+        });
       }
     };
 
@@ -126,6 +140,8 @@ function App() {
     setCapturedWhitePieces([]);
     setCapturedBlackPieces([]);
     setGameStatus("");
+    setBestMoveSquares({});
+    setBestMove("");
   }
 
   function undoMove() {
@@ -168,7 +184,10 @@ function App() {
   const options = {
     position: game.fen(),
     onPieceDrop,
-    squareStyles: lastMoveSquares,
+    squareStyles: {
+      ...lastMoveSquares,
+      ...bestMoveSquares,
+    },
   };
 
   return (
